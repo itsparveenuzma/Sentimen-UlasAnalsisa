@@ -20,35 +20,66 @@ for k, v in {
 }.items():
     if k not in st.session_state: st.session_state[k] = v
 
-# ---------------- Global CSS (tidak menyentuh sidebar untuk desktop)
 st.markdown("""
 <style>
-:root{ --nav-h: 80px; } /* samakan dengan tinggi navbar di bawah */
-
-/* header jangan dihilangkan - hamburger butuh ini */
-[data-testid="stHeader"]{
-  background: transparent !important; box-shadow:none !important; min-height:0 !important; height:auto !important;
+:root {
+  --nav-h: 80px;
 }
 
-/* offset konten karena navbar fixed */
-[data-testid="stAppViewContainer"] > .main{ margin-top: var(--nav-h) !important; }
+/* Navbar fixed */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-h);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem;
+  border-bottom: 3px solid #b71c1c;
+  z-index: 1000 !important;
+}
 
-/* navbar */
-.navbar{ z-index: 1000 !important; }
+/* JANGAN sembunyikan header Streamlit (dibutuhkan tombol sidebar) */
+[data-testid="stHeader"] {
+  background: transparent !important;
+  box-shadow: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+}
 
-/* MOBILE ONLY: pindahkan hamburger di bawah navbar. Tidak ubah layout desktop. */
-@media (max-width: 900px){
-  [data-testid="stSidebarCollapseButton"]{
-    position: fixed !important; top: var(--nav-h) !important; left: 10px !important;
-    z-index: 1002 !important; display: flex !important;
+/* Konten turun sesuai tinggi navbar */
+[data-testid="stAppViewContainer"] > .main {
+  margin-top: var(--nav-h) !important;
+}
+
+/* Sidebar di desktop selalu kelihatan */
+@media (min-width: 901px) {
+  [data-testid="stSidebar"] {
+    visibility: visible !important;
+    display: flex !important;
   }
-  /* Sidebar overlay tetap milik Streamlit; hanya digeser ke bawah navbar */
-  [data-testid="stSidebar"]{
-    top: var(--nav-h) !important; height: calc(100% - var(--nav-h)) !important; z-index: 1001 !important;
+}
+
+/* Tombol hamburger di mobile: pindahkan ke bawah navbar */
+@media (max-width: 900px) {
+  [data-testid="stSidebarCollapseButton"] {
+    position: fixed !important;
+    top: calc(var(--nav-h) + 5px) !important;
+    left: 10px !important;
+    z-index: 1002 !important;
+    display: flex !important;
+  }
+  [data-testid="stSidebar"] {
+    top: var(--nav-h) !important;
+    height: calc(100% - var(--nav-h)) !important;
+    z-index: 1001 !important;
   }
 }
 </style>
 """, unsafe_allow_html=True)
+
 
 # ---------------- Helpers
 def img_to_base64(path: str) -> str:
