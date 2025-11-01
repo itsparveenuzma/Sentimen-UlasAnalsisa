@@ -54,11 +54,16 @@ st.markdown("""
   margin-top: var(--nav-h) !important;
 }
 
-/* Sidebar di desktop selalu kelihatan */
+/* SIDE BAR SELALU MUNCUL DI DESKTOP */
 @media (min-width: 901px) {
   [data-testid="stSidebar"] {
     visibility: visible !important;
     display: flex !important;
+    transform: none !important;
+    position: fixed !important;
+    top: var(--nav-h) !important;
+    height: calc(100% - var(--nav-h)) !important;
+    z-index: 999 !important;
   }
 }
 
