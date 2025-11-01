@@ -114,25 +114,70 @@ st.markdown(f"""
 if page == "home":
     st.markdown("## Selamat datang di **UlasAnalisa**")
     st.markdown("### Apa itu **UlasAnalisa?**")
-    st.write("Analisis sentimen ulasan Google Play otomatis. Hasil bisa diunduh **CSV**.")
-    st.markdown("---"); st.write("### Cara pakai singkat")
-    c1,c2 = st.columns([1,1])
-    with c1: st.image("static/1.png", use_container_width=True)
-    with c2: st.write("Step 1: Copy URL aplikasi dari Google Play (web).")
+    st.markdown(
+        """
+        **UlasAnalisa** adalah website yang membantu menganalisis sentimen ulasan aplikasi di Google Play Store secara otomatis dan menyajikannya dalam bentuk tabel yang mudah dipahami.  
+        Hasil sentimen bisa diunduh dalam bentuk **.csv**.
+        """
+    )
+
+    st.markdown("### Bagaimana Cara Memakainya?")
+
+    # STEP 1 (Website)
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        st.image("static/1.png", caption="Tampilan Google Play di Website", use_container_width=True)
+    with col2:
+        st.markdown("### Step 1 (Website)")
+        st.write("Copy link aplikasi dari halaman Google Play Store yang ingin dianalisa (website).")
+
     st.markdown("---")
-    st.write("Step 1 (HP): Play Store → ⋮ → Share → Copy URL.")
-    a,b,c = st.columns(3)
-    with a: st.image("static/2.png", use_container_width=True)
-    with b: st.image("static/3.png", use_container_width=True)
-    with c: st.image("static/4.png", use_container_width=True)
+
+    # STEP 1 (Handphone)
+    st.markdown("### Step 1 (Handphone)")
+    sp1, c1, c2, c3, sp2 = st.columns([1, 2, 2, 2, 1])
+    with c1:
+        st.image("static/2.png", width=230)
+
+    with c2:
+        st.image("static/3.png", width=230)
+
+    with c3:
+        st.image("static/4.png", width=230)
+    st.write(
+        "Buka Google Play Store di HP → cari aplikasinya → ketuk **⋮ → Share** → pilih **Copy URL**."
+    )
+
     st.markdown("---")
-    c1,c2 = st.columns([1,1])
-    with c1: st.image("static/5.png", use_container_width=True)
-    with c2: st.write("Step 2: Paste URL di halaman **Prediksi**.")
+
+    # STEP 2
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        st.image("static/5.png", use_container_width=True)
+    with col2:
+        st.markdown("### Step 2")
+        st.write("Paste / tempel link URL tadi ke kolom input di halaman **Prediksi**.")
+
     st.markdown("---")
-    c1,c2 = st.columns([1,1])
-    with c1: st.image("static/6.png", use_container_width=True)
-    with c2: st.write("Step 3: Atur model, bahasa, negara, jumlah ulasan, urutan → klik **Prediksi**.")
+
+    # STEP 3
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        st.image("static/6.png", use_container_width=True)
+    with col2:
+        st.markdown("### Step 3")
+        st.write("Atur pengaturan (model, bahasa, negara, jumlah ulasan, urutan) sesuai kebutuhan.")
+
+    st.markdown("---")
+
+    # STEP 4
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        st.image("static/7.png", use_container_width=True)
+    with col2:
+        st.markdown("### Step 4")
+        st.write("Klik tombol **Prediksi** → sistem akan ambil ulasan dan menampilkan hasil serta tombol download CSV.")
+
 
 # ---------------- TENTANG
 elif page == "tentang":
