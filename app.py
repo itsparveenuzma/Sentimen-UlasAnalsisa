@@ -22,16 +22,16 @@ for k, v in {
 
 st.markdown("""
 <style>
-:root{ --nav-h: 80px; } /* tinggi navbar kamu */
+:root{ --nav-h: 80px; }
 
-/* NAVBAR fixed (biarkan seperti sebelumnya) */
-.navbar{
+/* NAVBAR fixed */
+.navbar {
   position: fixed; top:0; left:0; right:0; height: var(--nav-h);
   background:#fff; display:flex; align-items:center; padding:0 1.5rem;
   border-bottom:3px solid #b71c1c; z-index:1000 !important;
 }
 
-/* Header Streamlit jangan dihilangkan total, tapi nolkan tinggi supaya tidak ganggu */
+/* Header Streamlit jangan dihilangkan total */
 [data-testid="stHeader"]{
   background: transparent !important;
   box-shadow: none !important;
@@ -43,34 +43,47 @@ st.markdown("""
   margin-top: var(--nav-h) !important;
 }
 
-/* === PINDAHKAN TOMBOL HAMBURGER KE BAWAH NAVBAR (DESKTOP & MOBILE) === */
-[data-testid="stSidebarCollapseButton"]{
-  position: fixed !important;
-  top: calc(var(--nav-h) + 8px) !important;   /* di bawah navbar */
-  left: 10px !important;
-  z-index: 1002 !important;
-  display: flex !important;
-}
-
-/* Sesuaikan posisi & tinggi sidebar agar mulai di bawah navbar */
-[data-testid="stSidebar"]{
-  top: var(--nav-h) !important;
-  height: calc(100% - var(--nav-h)) !important;
-  z-index: 1001 !important;
-}
-
-/* Opsional: kalau mau sidebar SELALU terbuka di desktop, pakai ini */
+/* ===========================
+   DESKTOP MODE (≥901px)
+   Sidebar selalu terlihat,
+   tombol hamburger disembunyikan
+   =========================== */
 @media (min-width: 901px){
   [data-testid="stSidebar"]{
     visibility: visible !important;
     display: flex !important;
-    transform: none !important;   /* hilangkan animasi geser (kalau sempat ketutup) */
+    transform: none !important;
+    position: fixed !important;
+    top: var(--nav-h) !important;
+    height: calc(100% - var(--nav-h)) !important;
+    z-index: 999 !important;
+  }
+  [data-testid="stSidebarCollapseButton"]{
+    display: none !important;
+  }
+}
+
+/* ===========================
+   MOBILE MODE (≤900px)
+   Sidebar tertutup dulu,
+   tombol hamburger di bawah navbar
+   =========================== */
+@media (max-width: 900px){
+  [data-testid="stSidebarCollapseButton"]{
+    position: fixed !important;
+    top: calc(var(--nav-h) + 8px) !important;
+    left: 10px !important;
+    z-index: 1002 !important;
+    display: flex !important;
+  }
+  [data-testid="stSidebar"]{
+    top: var(--nav-h) !important;
+    height: calc(100% - var(--nav-h)) !important;
+    z-index: 1001 !important;
   }
 }
 </style>
 """, unsafe_allow_html=True)
-
-
 
 # ---------------- Helpers
 def img_to_base64(path: str) -> str:
