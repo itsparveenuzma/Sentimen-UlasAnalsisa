@@ -181,28 +181,16 @@ st.markdown("""
 st.markdown("""
 <div class="mobile-hamburger" id="mobile-hb">☰</div>
 <script>
-(function () {
-  function toggleSidebar() {
-    const doc = window.parent ? window.parent.document : document;
-    const sb  = doc.querySelector('[data-testid="stSidebar"]');
-    if (!sb) return;
-
-    const isHidden = sb.style.transform && sb.style.transform.includes('-100');
-
-    if (isHidden) {
-      sb.style.transform = 'translateX(0%)';
-      sb.style.visibility = 'visible';
-      sb.setAttribute('aria-expanded', 'true');
-    } else {
-      sb.style.transform = 'translateX(-100%)';
-      sb.setAttribute('aria-expanded', 'false');
-    }
+(function(){
+  function clickRealSidebar(){
+    const sel = '[data-testid="stSidebarCollapseButton"] button';
+    const btn = document.querySelector(sel) || (window.parent && window.parent.document.querySelector(sel));
+    if(btn) btn.click();
   }
-
-  document.addEventListener('DOMContentLoaded', function () {
-    const fake = document.getElementById('mobile-hb');
-    if (fake) fake.addEventListener('click', toggleSidebar);
-  });
+  const fake = document.getElementById("mobile-hb");
+  if(fake){
+    fake.addEventListener("click", clickRealSidebar);
+  }
 })();
 </script>
 """, unsafe_allow_html=True)
