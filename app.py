@@ -38,9 +38,9 @@ for k, v in {
 # =========================
 st.markdown("""
 <style>
-:root{ --nav-h: 80px; }  /* tinggi navbar desktop */
+:root{ --nav-h: 80px; }
 
-/* NAVBAR */
+/* navbar tetap */
 .navbar{
   position: fixed; top:0; left:0; right:0;
   height: var(--nav-h);
@@ -50,37 +50,20 @@ st.markdown("""
   border-bottom:3px solid #b71c1c;
   z-index:1000 !important;
 }
-.nav-left,.nav-right{
-  width:220px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
-.nav-center{
-  flex:1;
-  display:flex;
-  justify-content:center;
-  gap:2.5rem;
-}
-.nav-center a{
-  text-decoration:none;
-  color:#444;
-  font-weight:500;
-}
-.nav-center a.active{
-  color:#b71c1c;
-  border-bottom:2px solid #b71c1c;
-  padding-bottom:4px;
-}
-.logo-left{ height:150px; }
-.logo-right{ height:65px; }
 
-/* header streamlit di-0-kan */
-[data-testid="stHeader"]{
-  background: transparent !important;
-  box-shadow: none !important;
-  height: 0 !important;
-  min-height: 0 !important;
+/* sembunyikan tombol hamburger bawaan streamlit */
+[data-testid="stSidebarCollapseButton"]{
+  display: none !important;
+}
+
+/* sidebar selalu tampil */
+[data-testid="stSidebar"]{
+  top: var(--nav-h) !important;
+  height: calc(100% - var(--nav-h)) !important;
+  visibility: visible !important;
+  display: flex !important;
+  transform: none !important;
+  z-index: 1001 !important;
 }
 
 /* konten turun */
@@ -88,99 +71,26 @@ st.markdown("""
   margin-top: var(--nav-h) !important;
 }
 
-/* tombol bawaan streamlit (desktop) */
-[data-testid="stSidebarCollapseButton"]{
-  position: fixed !important;
-  top: calc(var(--nav-h) + 8px) !important;
-  left: 10px !important;
-  z-index: 1100 !important;
-  display: flex !important;
-}
-[data-testid="stSidebarCollapseButton"] > button{
-  background: #b71c1c !important;
-  color: #fff !important;
-  border: none !important;
-  width: 38px !important;
-  height: 38px !important;
-  border-radius: 999px !important;
-  box-shadow: 0 2px 6px rgba(0,0,0,.25);
-}
-
-/* sidebar mulai di bawah navbar */
-[data-testid="stSidebar"]{
-  top: var(--nav-h) !important;
-  height: calc(100% - var(--nav-h)) !important;
-  z-index: 1001 !important;
-}
-
-/* desktop: paksa sidebar tampil */
-@media (min-width: 901px){
-  [data-testid="stSidebar"]{
-    visibility: visible !important;
-    display: flex !important;
-    transform: none !important;
-  }
-  .mobile-hamburger{
-    display: none !important;
-  }
-}
-
-/* ======= MOBILE ======= */
+/* ----- MOBILE ----- */
 @media (max-width: 768px){
-
   :root{ --nav-h: 60px; }
+  .navbar{ height:60px !important; }
 
-  .navbar{
-    height: 60px !important;
-    padding: 0 1rem !important;
-  }
-  .nav-left,.nav-right{
-    width:140px;
-  }
-  .nav-center{
-    gap: 1.25rem;
-  }
-  .logo-left{ height: 44px !important; }
-  .logo-right{ height: 34px !important; }
-
-  /* tombol bawaan disembunyikan, tapi bisa diklik oleh JS */
-  [data-testid="stSidebarCollapseButton"]{
-    opacity: 0 !important;
-    display: none !important;
-    /* pointer-events: none !important; DIHAPUS */
-  }
-
-  /* tombol custom tampak */
-  .mobile-hamburger{
-    position: fixed;
-    top: calc(60px + 8px);
-    left: 12px;
-    width: 40px;
-    height: 40px;
-    background: #b71c1c;
-    color: #fff;
-    border-radius: 999px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-    z-index: 1200;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,.25);
-  }
-
-  /* sidebar ikut turun */
+  /* sidebar tetap muncul di mobile */
   [data-testid="stSidebar"]{
     top: 60px !important;
     height: calc(100% - 60px) !important;
+    transform: none !important;
+  }
+
+  /* kalau mau konten tidak ketutup sidebar, bisa kasih padding kiri */
+  [data-testid="stAppViewContainer"] > .main{
+    margin-left: 260px !important;   /* sesuaikan lebar sidebar-mu */
   }
 }
 </style>
 """, unsafe_allow_html=True)
 
-# =========================
-# KODE TOMBOL HAMBURGER DI SINI SUDAH DIHAPUS/DIPINDAHKAN
-# =========================
 
 
 # =========================
@@ -317,7 +227,6 @@ elif page == "prediksi":
       function openSidebarIfCollapsed() {
         try {
           const d = window.parent.document;
-          // SELECTOR DIPERBARUI
           const btn = d.querySelector('button[aria-label="Collapse sidebar"]');
           const sb  = d.querySelector('[data-testid="stSidebar"]');
           if (!btn || !sb) return;
@@ -333,31 +242,6 @@ elif page == "prediksi":
     })();
     </script>
     """, unsafe_allow_html=True)
-    
-    # ========================================================
-    # KODE TOMBOL HAMBURGER HANYA ADA DI SINI
-    # ========================================================
-    # tombol custom + JS trigger tombol asli (dengan selector yang benar)
-    st.markdown("""
-    <div class="mobile-hamburger" id="mobile-hb">☰</div>
-    <script>
-    (function(){
-      function clickRealSidebar(){
-        // SELECTOR DIPERBARUI
-        const sel = 'button[aria-label="Collapse sidebar"]';
-        const btn = document.querySelector(sel) || (window.parent && window.parent.document.querySelector(sel));
-        if(btn) btn.click();
-      }
-      const fake = document.getElementById("mobile-hb");
-      if(fake){
-        fake.addEventListener("click", clickRealSidebar);
-      }
-    })();
-    </script>
-    """, unsafe_allow_html=True)
-    # ========================================================
-    # AKHIR KODE TOMBOL HAMBURGER
-    # ========================================================
 
     st.title("Prediksi Sentimen dari Link Google Play")
     st.caption("Masukkan link aplikasi dari Google Play Store, lalu sistem akan prediksi sentimennya")
