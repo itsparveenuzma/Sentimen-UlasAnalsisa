@@ -38,6 +38,13 @@ for k, v in {
 # =========================
 st.markdown("""
 <style>
+
+<style>
+div[data-testid="collapsedControl"] {
+    display: none !important;
+}
+</style>
+
 :root{ --nav-h: 80px; }  /* tinggi navbar desktop */
 
 /* NAVBAR */
