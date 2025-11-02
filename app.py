@@ -66,7 +66,7 @@ st.markdown("""
   /* tombol hamburger misal mau di kanan bawah navbar */
   [data-testid="stSidebarCollapseButton"]{
     position: fixed !important;
-    top: calc(var(--nav-h) + 8px) !important;
+    top: calc(var(--nav-h) + 40px) !important;
     right: 14px !important;
     left: auto !important;
     z-index: 1002 !important;
