@@ -102,8 +102,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-
-
 # ---------------- Helpers
 def img_to_base64(path: str) -> str:
     with open(path, "rb") as f: return base64.b64encode(f.read()).decode()
@@ -119,17 +117,43 @@ home_a  = "active" if page=="home" else ""
 pred_a  = "active" if page=="prediksi" else ""
 tent_a  = "active" if page=="tentang" else ""
 
-st.markdown(f"""
+st.markdown("""
 <style>
 .navbar {{
   position: fixed; top:0; left:0; right:0; height:80px; background:#fff;
-  display:flex; align-items:center; padding:0 1.5rem; border-bottom:3px solid #b71c1c;
+  display:flex; align-items:center; padding:0 1.5rem;
+  border-bottom:3px solid #b71c1c; z-index:1000 !important;
 }}
 .nav-left,.nav-right {{ width:220px; display:flex; justify-content:center; align-items:center; }}
 .nav-center {{ flex:1; display:flex; justify-content:center; gap:2.5rem; }}
 .nav-center a {{ text-decoration:none; color:#444; font-weight:500; }}
 .nav-center a.active {{ color:#b71c1c; border-bottom:2px solid #b71c1c; padding-bottom:4px; }}
-.logo-left{{ height:150px; }} .logo-right{{ height:65px; }}
+.logo-left{{ height:150px; }}
+.logo-right{{ height:65px; }}
+
+/* ===== MOBILE OVERRIDE (penting) ===== */
+@media (max-width: 768px){
+  .navbar{{
+    height: 60px !important;
+    padding: 0 1rem !important;
+  }}
+  .logo-left{{ height: 44px !important; }}
+  .logo-right{{ height: 34px !important; }}
+
+  /* pindahkan hamburger ke bawah navbar */
+  [data-testid="stSidebarCollapseButton"]{{
+    position: fixed !important;
+    top: 68px !important;   /* 60 navbar + 8 jarak */
+    left: 12px !important;
+    z-index: 1100 !important;
+  }}
+
+  /* sidebar ikut turun */
+  [data-testid="stSidebar"]{{
+    top: 60px !important;
+    height: calc(100% - 60px) !important;
+  }}
+}
 </style>
 <div class="navbar">
   <div class="nav-left"><img src="data:image/png;base64,{logo_left_b64}" class="logo-left"></div>
@@ -141,6 +165,7 @@ st.markdown(f"""
   <div class="nav-right"><img src="data:image/png;base64,{logo_right_b64}" class="logo-right"></div>
 </div>
 """, unsafe_allow_html=True)
+
 
 # ---------------- HOME
 if page == "home":
