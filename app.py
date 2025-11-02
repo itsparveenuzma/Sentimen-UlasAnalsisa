@@ -65,7 +65,7 @@ st.markdown("""
   }
 }
 
-/* MOBILE: tombol DI BAWAH navbar, pas di atas judul */
+/* MOBILE: tombol DI BAWAH navbar, pas di atas judul ini */
 @media (max-width: 900px){
   /* tombol sebelum dipencet */
   [data-testid="stSidebarCollapseButton"]{
