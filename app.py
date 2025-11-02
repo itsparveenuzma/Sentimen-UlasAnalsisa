@@ -22,70 +22,54 @@ for k, v in {
 
 st.markdown("""
 <style>
-:root{ --nav-h: 80px; }
+:root{ --nav-h: 80px; } /* tinggi navbar kamu */
 
-/* navbar */
+/* NAVBAR fixed (biarkan seperti sebelumnya) */
 .navbar{
   position: fixed; top:0; left:0; right:0; height: var(--nav-h);
   background:#fff; display:flex; align-items:center; padding:0 1.5rem;
   border-bottom:3px solid #b71c1c; z-index:1000 !important;
 }
 
-/* rapikan header bawaan */
+/* Header Streamlit jangan dihilangkan total, tapi nolkan tinggi supaya tidak ganggu */
 [data-testid="stHeader"]{
   background: transparent !important;
-  height: 0 !important;
-  min-height: 0 !important;
+  box-shadow: none !important;
+  height: 0 !important; min-height: 0 !important;
 }
 
-/* konten turun */
+/* Turunkan konten utama di bawah navbar */
 [data-testid="stAppViewContainer"] > .main{
   margin-top: var(--nav-h) !important;
 }
 
-/* sidebar tetap mulai dari bawah navbar */
+/* === PINDAHKAN TOMBOL HAMBURGER KE BAWAH NAVBAR (DESKTOP & MOBILE) === */
+[data-testid="stSidebarCollapseButton"]{
+  position: fixed !important;
+  top: calc(var(--nav-h) + 8px) !important;   /* di bawah navbar */
+  left: 10px !important;
+  z-index: 1002 !important;
+  display: flex !important;
+}
+
+/* Sesuaikan posisi & tinggi sidebar agar mulai di bawah navbar */
 [data-testid="stSidebar"]{
   top: var(--nav-h) !important;
   height: calc(100% - var(--nav-h)) !important;
   z-index: 1001 !important;
 }
 
-/* DESKTOP */
+/* Opsional: kalau mau sidebar SELALU terbuka di desktop, pakai ini */
 @media (min-width: 901px){
   [data-testid="stSidebar"]{
     visibility: visible !important;
     display: flex !important;
-    transform: none !important;
-  }
-  [data-testid="stSidebarCollapseButton"]{
-    position: fixed !important;
-    top: calc(var(--nav-h) + 16px) !important;
-    left: 14px !important;
-    z-index: 1002 !important;
-  }
-}
-
-/* MOBILE: tombol DI BAWAH navbar, pas di atas judul ini */
-@media (max-width: 1200px), (max-device-width: 1200px){
-  /* tombol sebelum dipencet */
-  [data-testid="stSidebarCollapseButton"]{
-    position: fixed !important;
-    top: calc(var(--nav-h) + 20px) !important;
-    left: 14px !important;
-    right: auto !important;
-    inset: auto !important;      /* reset inset bawaan streamlit */
-    z-index: 2000 !important;
-  }
-
-  /* tombol saat sidebar kebuka */
-  section[data-testid="stSidebar"] [data-testid="stSidebarCollapseButton"]{
-    position: sticky !important;
-    top: calc(var(--nav-h) + 20px) !important;
-    left: 12px !important;
+    transform: none !important;   /* hilangkan animasi geser (kalau sempat ketutup) */
   }
 }
 </style>
 """, unsafe_allow_html=True)
+
 
 
 # ---------------- Helpers
