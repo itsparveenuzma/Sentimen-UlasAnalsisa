@@ -18,7 +18,7 @@ st.set_page_config(
 )
 
 # =========================
-# SESSION STATE BOOTSTRAP
+# SESSION STATE
 # =========================
 for k, v in {
     "results": {},
@@ -31,7 +31,7 @@ for k, v in {
         st.session_state[k] = v
 
 # =========================
-# GLOBAL CSS (TANPA <script>)
+# GLOBAL CSS (NO <script>)
 # =========================
 st.markdown("""
 <style>
@@ -80,38 +80,52 @@ st.markdown("""
   min-height: 0 !important;
 }
 
-/* konten turun */
+/* konten turun supaya gak ketimpa navbar */
 [data-testid="stAppViewContainer"] > .main{
   margin-top: var(--nav-h) !important;
 }
 
-/* tombol sidebar bawaan streamlit – kita pakai ini */
+/* ====== TOMBOL SIDEBAR (INI YG KITA JADIKAN HAMBURGER) ====== */
 [data-testid="stSidebarCollapseButton"]{
   position: fixed !important;
   top: calc(var(--nav-h) + 10px) !important;
   left: 12px !important;
   z-index: 1100 !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
+  display: flex !important;
 }
 [data-testid="stSidebarCollapseButton"] > button{
   background: #b71c1c !important;
   color: #fff !important;
   border: none !important;
-  width: 40px !important;
-  height: 40px !important;
+  width: 44px !important;
+  height: 44px !important;
   border-radius: 999px !important;
   box-shadow: 0 2px 6px rgba(0,0,0,.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0;              /* hide default text */
+}
+/* ilangin icon default (kalau ada) */
+[data-testid="stSidebarCollapseButton"] svg{
+  display: none !important;
+}
+/* ganti isi jadi hamburger */
+[data-testid="stSidebarCollapseButton"] > button::before{
+  content: "☰";
+  font-size: 22px;
+  line-height: 1;
+  color: #fff;
 }
 
-/* sidebar mulai di bawah navbar */
+/* sidebar turun mengikuti navbar */
 [data-testid="stSidebar"]{
   top: var(--nav-h) !important;
   height: calc(100% - var(--nav-h)) !important;
   z-index: 1001 !important;
 }
 
-/* DESKTOP: paksa sidebar selalu kelihatan */
+/* DESKTOP: sidebar selalu kelihatan */
 @media (min-width: 901px){
   [data-testid="stSidebar"]{
     visibility: visible !important;
@@ -134,7 +148,7 @@ st.markdown("""
   .logo-left{ height: 44px !important; }
   .logo-right{ height: 34px !important; }
 
-  /* pindahkan tombol bawaan ke bawah navbar */
+  /* pindahkan tombol hamburger (asli streamlit) ke bawah navbar */
   [data-testid="stSidebarCollapseButton"]{
     top: calc(60px + 8px) !important;
     left: 12px !important;
@@ -150,7 +164,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # =========================
-# HELPERS
+# HELPER
 # =========================
 def img_to_base64(path: str) -> str:
     with open(path, "rb") as f:
@@ -189,54 +203,26 @@ st.markdown(f"""
 if page == "home":
     st.markdown("## Selamat datang di **UlasAnalisa**")
     st.markdown("### Apa itu **UlasAnalisa?**")
-    st.markdown(
-        """
-        **UlasAnalisa** adalah website yang membantu menganalisis sentimen ulasan aplikasi di Google Play Store secara otomatis
-        dan menyajikannya dalam bentuk tabel yang mudah dipahami.  
-        Hasil sentimen bisa diunduh dalam bentuk **.csv**.
-        """
-    )
+    st.markdown("""
+**UlasAnalisa** adalah website yang membantu menganalisis sentimen ulasan aplikasi di Google Play Store secara otomatis
+dan menyajikannya dalam bentuk tabel yang mudah dipahami.  
+Hasil sentimen bisa diunduh dalam bentuk **.csv**.
+""")
 
     st.markdown("### Bagaimana Cara Memakainya?")
-    col1, col2 = st.columns([1, 1])
+    col1, col2 = st.columns(2)
     with col1:
-        st.image("static/1.png", caption="Tampilan Google Play di Website", use_container_width=True)
+        st.image("static/1.png", use_container_width=True)
     with col2:
-        st.markdown("### Step 1 (Website)")
-        st.write("Copy link aplikasi dari halaman Google Play Store yang ingin dianalisa (website).")
+        st.write("Copy link aplikasi dari Google Play, lalu tempel di halaman **Prediksi**.")
 
     st.markdown("---")
 
     st.markdown("### Step 1 (Handphone)")
-    sp1, c1, c2, c3, sp2 = st.columns([1, 2, 2, 2, 1])
-    with c1: st.image("static/2.png", width=230)
-    with c2: st.image("static/3.png", width=230)
-    with c3: st.image("static/4.png", width=230)
-    st.write("Buka Google Play Store di HP → cari aplikasinya → ketuk **⋮ → Share** → pilih **Copy URL**.")
-
-    st.markdown("---")
-
-    col1, col2 = st.columns([1, 1])
-    with col1: st.image("static/5.png", use_container_width=True)
-    with col2:
-        st.markdown("### Step 2")
-        st.write("Tempel link ke halaman **Prediksi**.")
-
-    st.markdown("---")
-
-    col1, col2 = st.columns([1, 1])
-    with col1: st.image("static/6.png", use_container_width=True)
-    with col2:
-        st.markdown("### Step 3")
-        st.write("Atur model, bahasa, negara, jumlah ulasan, dan urutan.")
-
-    st.markdown("---")
-
-    col1, col2 = st.columns([1, 1])
-    with col1: st.image("static/7.png", use_container_width=True)
-    with col2:
-        st.markdown("### Step 4")
-        st.write("Klik **Prediksi** → hasil dan tombol download muncul.")
+    c1, c2, c3 = st.columns(3)
+    with c1: st.image("static/2.png", use_container_width=True)
+    with c2: st.image("static/3.png", use_container_width=True)
+    with c3: st.image("static/4.png", use_container_width=True)
 
 # =========================
 # HALAMAN TENTANG
@@ -256,16 +242,6 @@ elif page == "tentang":
 **Topik Skripsi** :  
 Perencanaan Analisis Sentimen Aplikasi Sosial Media Pada Google Play Store Menggunakan Model Random Forest, Support Vector Machine dan TF-IDF
 """)
-    st.markdown("---")
-    a, b = st.columns(2)
-    with a:
-        st.markdown("### Dosen Pembimbing")
-        st.image("static/pak_tri.webp", width=140)
-        st.markdown("Tri Sutrisno, S.Si., M.Sc.")
-    with b:
-        st.markdown("### Institusi")
-        st.image("static/Logo_untar.png", width=180)
-        st.markdown("**Universitas Tarumanagara**")
 
 # =========================
 # HALAMAN PREDIKSI
@@ -324,8 +300,7 @@ elif page == "prediksi":
                 count=min(200, n-len(got)), continuation_token=token
             )
             got.extend(batch)
-            if token is None:
-                break
+            if token is None: break
         if not got:
             return pd.DataFrame(columns=["content", "score", "at", "replyContent", "userName"])
         return pd.DataFrame(got)
