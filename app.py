@@ -46,8 +46,8 @@ st.markdown("""
 /* === PINDAHKAN TOMBOL HAMBURGER KE BAWAH NAVBAR (DESKTOP & MOBILE) === */
 [data-testid="stSidebarCollapseButton"]{
   position: fixed !important;
-  top: calc(var(--nav-h) + 20px) !important;   /* di bawah navbar */
-  left: 10px !important;
+  top: calc(var(--nav-h) + 6px) !important;   /* di bawah navbar */
+  left: 16px !important;
   z-index: 1002 !important;
   display: flex !important;
 }
