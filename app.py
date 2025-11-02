@@ -88,11 +88,6 @@ st.markdown("""
   margin-top: var(--nav-h) !important;
 }
 
-/* SEMBUNYIKAN tombol sidebar bawaan (desktop) */
-[data-testid="stSidebarCollapseButton"]{
-  display: none !important;
-}
-
 /* sidebar selalu muncul dan mulai di bawah navbar */
 [data-testid="stSidebar"]{
   top: var(--nav-h) !important;
@@ -232,29 +227,6 @@ Perencanaan Analisis Sentimen Aplikasi Sosial Media Pada Google Play Store Mengg
 # HALAMAN PREDIKSI
 # =========================
 elif page == "prediksi":
-
-    # paksa sidebar kebuka di desktop (boleh disimpan)
-    st.markdown("""
-    <script>
-    (function() {
-      function openSidebarIfCollapsed() {
-        try {
-          const d = window.parent.document;
-          const btn = d.querySelector('button[aria-label="Collapse sidebar"]');
-          const sb  = d.querySelector('[data-testid="stSidebar"]');
-          if (!btn || !sb) return;
-          const isCollapsed = sb.getAttribute('aria-expanded') === 'false';
-          const isDesktop   = window.innerWidth >= 901;
-          if (isDesktop && isCollapsed) btn.click();
-        } catch (e) {}
-      }
-      setTimeout(openSidebarIfCollapsed, 150);
-      setTimeout(openSidebarIfCollapsed, 400);
-      setTimeout(openSidebarIfCollapsed, 800);
-      window.addEventListener('resize', openSidebarIfCollapsed);
-    })();
-    </script>
-    """, unsafe_allow_html=True)
 
     st.title("Prediksi Sentimen dari Link Google Play")
     st.caption("Masukkan link aplikasi dari Google Play Store, lalu sistem akan prediksi sentimennya")
