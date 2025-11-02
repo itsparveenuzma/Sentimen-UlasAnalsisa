@@ -70,7 +70,7 @@ st.markdown("""
   /* tombol sebelum dipencet */
   [data-testid="stSidebarCollapseButton"]{
     position: fixed !important;
-    top: calc(var(--nav-h) + 8px) !important;
+    top: calc(var(--nav-h) + 20px) !important;
     left: 14px !important;
     z-index: 1002 !important;
   }
