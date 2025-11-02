@@ -22,53 +22,85 @@ for k, v in {
 
 st.markdown("""
 <style>
-:root{ --nav-h: 80px; } /* tinggi navbar kamu */
+:root{ --nav-h: 80px; }  /* tinggi navbar default (desktop) */
 
-/* NAVBAR fixed (biarkan seperti sebelumnya) */
+/* NAVBAR utama */
 .navbar{
-  position: fixed; top:0; left:0; right:0; height: var(--nav-h);
-  background:#fff; display:flex; align-items:center; padding:0 1.5rem;
-  border-bottom:3px solid #b71c1c; z-index:1000 !important;
+  position: fixed; top:0; left:0; right:0;
+  height: var(--nav-h);
+  background:#fff;
+  display:flex; align-items:center;
+  padding:0 1.5rem;
+  border-bottom:3px solid #b71c1c;
+  z-index:1000 !important;
 }
 
-/* Header Streamlit jangan dihilangkan total, tapi nolkan tinggi supaya tidak ganggu */
+/* header streamlit diratakan */
 [data-testid="stHeader"]{
   background: transparent !important;
   box-shadow: none !important;
-  height: 0 !important; min-height: 0 !important;
+  height: 0 !important;
+  min-height: 0 !important;
 }
 
-/* Turunkan konten utama di bawah navbar */
+/* konten turun supaya tidak ketutup navbar */
 [data-testid="stAppViewContainer"] > .main{
   margin-top: var(--nav-h) !important;
 }
 
-/* === PINDAHKAN TOMBOL HAMBURGER KE BAWAH NAVBAR (DESKTOP & MOBILE) === */
+/* TOMBOL HAMBURGER (default: desktop) */
 [data-testid="stSidebarCollapseButton"]{
   position: fixed !important;
-  top: calc(var(--nav-h) + 8px) !important;   /* di bawah navbar */
+  top: calc(var(--nav-h) + 8px) !important;   /* tepat di bawah navbar */
   left: 10px !important;
   z-index: 1002 !important;
   display: flex !important;
 }
 
-/* Sesuaikan posisi & tinggi sidebar agar mulai di bawah navbar */
+/* sidebar mulai di bawah navbar */
 [data-testid="stSidebar"]{
   top: var(--nav-h) !important;
   height: calc(100% - var(--nav-h)) !important;
   z-index: 1001 !important;
 }
 
-/* Opsional: kalau mau sidebar SELALU terbuka di desktop, pakai ini */
+/* desktop: paksa sidebar kelihatan */
 @media (min-width: 901px){
   [data-testid="stSidebar"]{
     visibility: visible !important;
     display: flex !important;
-    transform: none !important;   /* hilangkan animasi geser (kalau sempat ketutup) */
+    transform: none !important;
+  }
+}
+
+/* ======== MOBILE OVERRIDE ======== */
+@media (max-width: 768px){
+
+  /* navbar di HP lebih pendek */
+  :root{
+    --nav-h: 60px;
+  }
+
+  .navbar{
+    height: 60px !important;
+    padding: 0 1rem !important;
+  }
+
+  /* tombol hamburger turun ikut tinggi navbar HP */
+  [data-testid="stSidebarCollapseButton"]{
+    top: calc(var(--nav-h) + 8px) !important;   /* = 68px */
+    left: 12px !important;
+  }
+
+  /* sidebar juga ikut tinggi baru */
+  [data-testid="stSidebar"]{
+    top: var(--nav-h) !important;
+    height: calc(100% - var(--nav-h)) !important;
   }
 }
 </style>
 """, unsafe_allow_html=True)
+
 
 
 
