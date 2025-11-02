@@ -7,7 +7,6 @@ import streamlit as st
 from google_play_scraper import app as gp_app, reviews, Sort
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
-
 # =========================
 # PAGE CONFIG
 # =========================
@@ -17,7 +16,6 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
-
 
 # =========================
 # SESSION STATE BOOTSTRAP
@@ -32,13 +30,12 @@ for k, v in {
     if k not in st.session_state:
         st.session_state[k] = v
 
-
 # =========================
-# GLOBAL CSS (SATU SAJA)
+# GLOBAL CSS
 # =========================
 st.markdown("""
 <style>
-:root{ --nav-h: 80px; }  /* tinggi navbar desktop */
+:root{ --nav-h: 80px; }
 
 /* NAVBAR */
 .navbar{
@@ -88,7 +85,7 @@ st.markdown("""
   margin-top: var(--nav-h) !important;
 }
 
-/* tombol bawaan streamlit (desktop) */
+/* tombol bawaan streamlit (default) */
 [data-testid="stSidebarCollapseButton"]{
   position: fixed !important;
   top: calc(var(--nav-h) + 8px) !important;
@@ -113,7 +110,7 @@ st.markdown("""
   z-index: 1001 !important;
 }
 
-/* desktop: paksa sidebar tampil */
+/* DESKTOP */
 @media (min-width: 901px){
   [data-testid="stSidebar"]{
     visibility: visible !important;
@@ -143,13 +140,16 @@ st.markdown("""
   .logo-left{ height: 44px !important; }
   .logo-right{ height: 34px !important; }
 
-  /* tombol bawaan disembunyikan (kita pakai tombol custom) */
+  /* tombol bawaan JANGAN dimatikan, cuma disingkirkan ke luar layar
+     supaya masih bisa di-click lewat JS */
   [data-testid="stSidebarCollapseButton"]{
-    opacity: 0 !important;
-    pointer-events: none !important;
+    top: 70px !important;
+    left: -9999px !important;   /* tetap hidup tapi nggak kelihatan */
+    opacity: 1 !important;
+    pointer-events: auto !important;
   }
 
-  /* tombol custom tampak */
+  /* tombol custom */
   .mobile-hamburger{
     position: fixed;
     top: calc(60px + 8px);
@@ -177,24 +177,44 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# tombol custom + JS trigger tombol asli
+# tombol custom + JS yg klik tombol asli (yang disingkirkan)
 st.markdown("""
 <div class="mobile-hamburger" id="mobile-hb">☰</div>
 <script>
 (function(){
-  function clickRealSidebar(){
-    const sel = '[data-testid="stSidebarCollapseButton"] button';
-    const btn = document.querySelector(sel) || (window.parent && window.parent.document.querySelector(sel));
-    if(btn) btn.click();
+  function findRealBtn(){
+    // coba di dokumen sendiri
+    let d = document.querySelector('[data-testid="stSidebarCollapseButton"]');
+    if (d) return d;
+    // coba di parent (kadang streamlit di iframe)
+    if (window.parent && window.parent.document){
+      d = window.parent.document.querySelector('[data-testid="stSidebarCollapseButton"]');
+      if (d) return d;
+    }
+    return null;
   }
+
+  function toggleSidebar(){
+    const btn = findRealBtn();
+    if (btn){
+      // kalau elemennya <div> ada <button> di dalamnya
+      const realBtn = btn.tagName.toLowerCase() === "button" ? btn : btn.querySelector("button");
+      (realBtn || btn).click();
+    }
+  }
+
   const fake = document.getElementById("mobile-hb");
-  if(fake){
-    fake.addEventListener("click", clickRealSidebar);
+  if (fake){
+    fake.addEventListener("click", toggleSidebar);
   }
+
+  // jaga-jaga: kalau tombol asli munculnya telat
+  const iv = setInterval(() => {
+    if (findRealBtn()) clearInterval(iv);
+  }, 1000);
 })();
 </script>
 """, unsafe_allow_html=True)
-
 
 # =========================
 # HELPERS
@@ -203,9 +223,8 @@ def img_to_base64(path: str) -> str:
     with open(path, "rb") as f:
         return base64.b64encode(f.read()).decode()
 
-
 # =========================
-# NAVBAR (HTML SAJA)
+# NAVBAR
 # =========================
 logo_left_b64  = img_to_base64("static/logo_ulas.png")
 logo_right_b64 = img_to_base64("static/fti_untar.png")
@@ -230,7 +249,6 @@ st.markdown(f"""
   <div class="nav-right"><img src="data:image/png;base64,{logo_right_b64}" class="logo-right"></div>
 </div>
 """, unsafe_allow_html=True)
-
 
 # =========================
 # HALAMAN HOME
@@ -287,7 +305,6 @@ if page == "home":
         st.markdown("### Step 4")
         st.write("Klik **Prediksi** → hasil dan tombol download muncul.")
 
-
 # =========================
 # HALAMAN TENTANG
 # =========================
@@ -317,7 +334,6 @@ Perencanaan Analisis Sentimen Aplikasi Sosial Media Pada Google Play Store Mengg
         st.image("static/Logo_untar.png", width=180)
         st.markdown("**Universitas Tarumanagara**")
 
-
 # =========================
 # HALAMAN PREDIKSI
 # =========================
@@ -327,21 +343,21 @@ elif page == "prediksi":
     st.markdown("""
     <script>
     (function() {
-      function openSidebarIfCollapsed() {
-        try {
-          const d = window.parent.document;
-          const btn = d.querySelector('[data-testid="stSidebarCollapseButton"] button');
-          const sb  = d.querySelector('[data-testid="stSidebar"]');
-          if (!btn || !sb) return;
-          const isCollapsed = sb.getAttribute('aria-expanded') === 'false';
-          const isDesktop   = window.innerWidth >= 901;
-          if (isDesktop && isCollapsed) btn.click();
-        } catch (e) {}
+      function openSidebar() {
+        const btn = document.querySelector('[data-testid="stSidebarCollapseButton"]') ||
+                    (window.parent && window.parent.document.querySelector('[data-testid="stSidebarCollapseButton"]'));
+        if (!btn) return;
+        const sb = document.querySelector('[data-testid="stSidebar"]') ||
+                   (window.parent && window.parent.document.querySelector('[data-testid="stSidebar"]'));
+        const isDesktop = window.innerWidth >= 901;
+        if (isDesktop && sb && sb.getAttribute("aria-expanded") === "false") {
+          const realBtn = btn.tagName.toLowerCase() === "button" ? btn : btn.querySelector("button");
+          (realBtn || btn).click();
+        }
       }
-      setTimeout(openSidebarIfCollapsed, 150);
-      setTimeout(openSidebarIfCollapsed, 400);
-      setTimeout(openSidebarIfCollapsed, 800);
-      window.addEventListener('resize', openSidebarIfCollapsed);
+      setTimeout(openSidebar, 200);
+      setTimeout(openSidebar, 600);
+      window.addEventListener("resize", openSidebar);
     })();
     </script>
     """, unsafe_allow_html=True)
@@ -363,7 +379,7 @@ elif page == "prediksi":
     try:
         tfidf_vectorizer, svm_model, rf_model = load_artifacts()
     except Exception as e:
-        st.error(f"Gagal memuat artifacts.\nDetail: {e}")
+        st.error(f"Gagal memuat artifacts.\\nDetail: {e}")
         st.stop()
 
     avail = []
@@ -419,9 +435,9 @@ elif page == "prediksi":
         try:
             meta = gp_app(app_id, lang=lang, country=country)
             st.markdown(
-                f"**App:** {meta.get('title','?')}  \n"
-                f"**Package:** `{app_id}`  \n"
-                f"**Installs:** {meta.get('installs','?')}  \n"
+                f"**App:** {meta.get('title','?')}  \\n"
+                f"**Package:** `{app_id}`  \\n"
+                f"**Installs:** {meta.get('installs','?')}  \\n"
                 f"**Score:** {meta.get('score','?')}"
             )
         except Exception:
@@ -491,7 +507,6 @@ elif page == "prediksi":
                 .to_csv(index=False)
                 .encode("utf-8")
             )
-
 
 # =========================
 # OUTPUT / HASIL
