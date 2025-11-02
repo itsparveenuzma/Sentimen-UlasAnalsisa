@@ -181,27 +181,28 @@ st.markdown("""
 st.markdown("""
 <div class="mobile-hamburger" id="mobile-hb">☰</div>
 <script>
-(function(){
+(function () {
   function toggleSidebar() {
-    const d = window.parent ? window.parent.document : document;
-    const sb = d.querySelector('[data-testid="stSidebar"]');
+    const doc = window.parent ? window.parent.document : document;
+    const sb  = doc.querySelector('[data-testid="stSidebar"]');
     if (!sb) return;
 
-    const isOpen = sb.getAttribute("aria-expanded") === "true" || sb.style.transform === "none";
+    const isHidden = sb.style.transform && sb.style.transform.includes('-100');
 
-    if (isOpen) {
-      sb.style.transform = "translateX(-100%)";
-      sb.setAttribute("aria-expanded", "false");
+    if (isHidden) {
+      sb.style.transform = 'translateX(0%)';
+      sb.style.visibility = 'visible';
+      sb.setAttribute('aria-expanded', 'true');
     } else {
-      sb.style.transform = "none";
-      sb.setAttribute("aria-expanded", "true");
+      sb.style.transform = 'translateX(-100%)';
+      sb.setAttribute('aria-expanded', 'false');
     }
   }
 
-  const fake = document.getElementById("mobile-hb");
-  if (fake) {
-    fake.addEventListener("click", toggleSidebar);
-  }
+  document.addEventListener('DOMContentLoaded', function () {
+    const fake = document.getElementById('mobile-hb');
+    if (fake) fake.addEventListener('click', toggleSidebar);
+  });
 })();
 </script>
 """, unsafe_allow_html=True)
