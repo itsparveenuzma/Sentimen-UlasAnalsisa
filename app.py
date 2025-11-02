@@ -155,19 +155,16 @@ tent_a  = "active" if page == "tentang" else ""
 
 st.markdown(f"""
 <div class="navbar">
-  <div class="nav-left">
-    <img src="data:image/png;base64,{logo_left_b64}" class="logo-left">
-  </div>
+  <div class="nav-left"><img src="data:image/png;base64,{logo_left_b64}" class="logo-left"></div>
   <div class="nav-center">
     <a href="?page=home" target="_self" class="{home_a}">Beranda</a>
     <a href="?page=prediksi" target="_self" class="{pred_a}">Prediksi</a>
     <a href="?page=tentang" target="_self" class="{tent_a}">Tentang</a>
   </div>
-  <div class="nav-right">
-    <img src="data:image/png;base64,{logo_right_b64}" class="logo-right">
-  </div>
+  <div class="nav-right"><img src="data:image/png;base64,{logo_right_b64}" class="logo-right"></div>
 </div>
 """, unsafe_allow_html=True)
+
 
 # ---------------- HOME
 if page == "home":
