@@ -146,7 +146,7 @@ st.markdown("""
   /* tombol bawaan disembunyikan (kita pakai tombol custom) */
   [data-testid="stSidebarCollapseButton"]{
     opacity: 0 !important;
-    pointer-events: none !important;
+    /* pointer-events: none !important; DIHAPUS agar klik JS bisa memicu */
   }
 
   /* tombol custom tampak */
@@ -176,6 +176,7 @@ st.markdown("""
 }
 </style>
 """, unsafe_allow_html=True)
+
 
 # =========================
 # HELPERS
@@ -311,7 +312,7 @@ elif page == "prediksi":
       function openSidebarIfCollapsed() {
         try {
           const d = window.parent.document;
-          // GANTI SELECTOR DI SINI
+          // SELECTOR DIPERBAIKI
           const btn = d.querySelector('button[aria-label="Collapse sidebar"]');
           const sb  = d.querySelector('[data-testid="stSidebar"]');
           if (!btn || !sb) return;
@@ -329,14 +330,14 @@ elif page == "prediksi":
     """, unsafe_allow_html=True)
     
     # ========================================================
-    # KODE TOMBOL HAMBURGER DIPINDAHKAN KE SINI
+    # KODE TOMBOL HAMBURGER DIPINDAHKAN KE SINI (HANYA DI HALAMAN PREDIKSI)
     # ========================================================
     st.markdown("""
     <div class="mobile-hamburger" id="mobile-hb">☰</div>
     <script>
     (function(){
       function clickRealSidebar(){
-        // GANTI SELECTOR DI SINI
+        // SELECTOR DIPERBAIKI
         const sel = 'button[aria-label="Collapse sidebar"]';
         const btn = document.querySelector(sel) || (window.parent && window.parent.document.querySelector(sel));
         if(btn) btn.click();
