@@ -22,32 +22,37 @@ for k, v in {
 
 st.markdown("""
 <style>
-:root{
-  --nav-h: 80px;          /* desktop */
+:root{ --nav-h: 80px; } /* tinggi navbar kamu */
+
+/* NAVBAR fixed (biarkan seperti sebelumnya) */
+.navbar{
+  position: fixed; top:0; left:0; right:0; height: var(--nav-h);
+  background:#fff; display:flex; align-items:center; padding:0 1.5rem;
+  border-bottom:3px solid #b71c1c; z-index:1000 !important;
 }
 
-/* ===== NAVBAR & OFFSET UMUM ===== */
+/* Header Streamlit jangan dihilangkan total, tapi nolkan tinggi supaya tidak ganggu */
 [data-testid="stHeader"]{
   background: transparent !important;
   box-shadow: none !important;
-  height: 0 !important;
-  min-height: 0 !important;
+  height: 0 !important; min-height: 0 !important;
 }
 
+/* Turunkan konten utama di bawah navbar */
 [data-testid="stAppViewContainer"] > .main{
   margin-top: var(--nav-h) !important;
 }
 
-/* ===== TOMBOL HAMBURGER (DEFAULT / DESKTOP) ===== */
+/* === PINDAHKAN TOMBOL HAMBURGER KE BAWAH NAVBAR (DESKTOP & MOBILE) === */
 [data-testid="stSidebarCollapseButton"]{
   position: fixed !important;
-  top: calc(var(--nav-h) + 8px) !important;
+  top: calc(var(--nav-h) + 8px) !important;   /* di bawah navbar */
   left: 10px !important;
   z-index: 1002 !important;
   display: flex !important;
 }
 
-/* Sidebar turun di bawah navbar */
+/* Sesuaikan posisi & tinggi sidebar agar mulai di bawah navbar */
 [data-testid="stSidebar"]{
   top: var(--nav-h) !important;
   height: calc(100% - var(--nav-h)) !important;
@@ -74,17 +79,16 @@ st.markdown("""
   }
 }
 
-/* Biar sidebar selalu kelihatan di desktop */
+/* Opsional: kalau mau sidebar SELALU terbuka di desktop, pakai ini */
 @media (min-width: 901px){
   [data-testid="stSidebar"]{
     visibility: visible !important;
     display: flex !important;
-    transform: none !important;
+    transform: none !important;   /* hilangkan animasi geser (kalau sempat ketutup) */
   }
 }
 </style>
 """, unsafe_allow_html=True)
-
 
 # ---------------- Helpers
 def img_to_base64(path: str) -> str:
