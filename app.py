@@ -66,7 +66,7 @@ st.markdown("""
 }
 
 /* MOBILE: tombol DI BAWAH navbar, pas di atas judul ini */
-@media (max-width: 900px){
+@media (max-width: 1200px), (max-device-width: 1200px){
   /* tombol sebelum dipencet */
   [data-testid="stSidebarCollapseButton"]{
     position: fixed !important;
