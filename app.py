@@ -143,10 +143,10 @@ st.markdown("""
   .logo-left{ height: 44px !important; }
   .logo-right{ height: 34px !important; }
 
-  /* tombol bawaan disembunyikan (kita pakai tombol custom) */
+  /* tombol bawaan disembunyikan, tapi bisa diklik oleh JS */
   [data-testid="stSidebarCollapseButton"]{
     opacity: 0 !important;
-    /* pointer-events: none !important; DIHAPUS agar klik JS bisa memicu */
+    /* pointer-events: none !important; DIHAPUS */
   }
 
   /* tombol custom tampak */
@@ -176,6 +176,10 @@ st.markdown("""
 }
 </style>
 """, unsafe_allow_html=True)
+
+# =========================
+# KODE TOMBOL HAMBURGER DI SINI SUDAH DIHAPUS/DIPINDAHKAN
+# =========================
 
 
 # =========================
@@ -312,7 +316,7 @@ elif page == "prediksi":
       function openSidebarIfCollapsed() {
         try {
           const d = window.parent.document;
-          // SELECTOR DIPERBAIKI
+          // SELECTOR DIPERBARUI
           const btn = d.querySelector('button[aria-label="Collapse sidebar"]');
           const sb  = d.querySelector('[data-testid="stSidebar"]');
           if (!btn || !sb) return;
@@ -330,14 +334,15 @@ elif page == "prediksi":
     """, unsafe_allow_html=True)
     
     # ========================================================
-    # KODE TOMBOL HAMBURGER DIPINDAHKAN KE SINI (HANYA DI HALAMAN PREDIKSI)
+    # KODE TOMBOL HAMBURGER HANYA ADA DI SINI
     # ========================================================
+    # tombol custom + JS trigger tombol asli (dengan selector yang benar)
     st.markdown("""
     <div class="mobile-hamburger" id="mobile-hb">☰</div>
     <script>
     (function(){
       function clickRealSidebar(){
-        // SELECTOR DIPERBAIKI
+        // SELECTOR DIPERBARUI
         const sel = 'button[aria-label="Collapse sidebar"]';
         const btn = document.querySelector(sel) || (window.parent && window.parent.document.querySelector(sel));
         if(btn) btn.click();
@@ -350,7 +355,7 @@ elif page == "prediksi":
     </script>
     """, unsafe_allow_html=True)
     # ========================================================
-    # AKHIR DARI KODE YANG DIPINDAHKAN
+    # AKHIR KODE TOMBOL HAMBURGER
     # ========================================================
 
     st.title("Prediksi Sentimen dari Link Google Play")
