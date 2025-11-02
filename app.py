@@ -177,25 +177,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# tombol custom + JS trigger tombol asli
-st.markdown("""
-<div class="mobile-hamburger" id="mobile-hb">☰</div>
-<script>
-(function(){
-  function clickRealSidebar(){
-    const sel = '[data-testid="stSidebarCollapseButton"] button';
-    const btn = document.querySelector(sel) || (window.parent && window.parent.document.querySelector(sel));
-    if(btn) btn.click();
-  }
-  const fake = document.getElementById("mobile-hb");
-  if(fake){
-    fake.addEventListener("click", clickRealSidebar);
-  }
-})();
-</script>
-""", unsafe_allow_html=True)
-
-
 # =========================
 # HELPERS
 # =========================
@@ -330,7 +311,8 @@ elif page == "prediksi":
       function openSidebarIfCollapsed() {
         try {
           const d = window.parent.document;
-          const btn = d.querySelector('[data-testid="stSidebarCollapseButton"] button');
+          // GANTI SELECTOR DI SINI
+          const btn = d.querySelector('button[aria-label="Collapse sidebar"]');
           const sb  = d.querySelector('[data-testid="stSidebar"]');
           if (!btn || !sb) return;
           const isCollapsed = sb.getAttribute('aria-expanded') === 'false';
@@ -345,6 +327,30 @@ elif page == "prediksi":
     })();
     </script>
     """, unsafe_allow_html=True)
+    
+    # ========================================================
+    # KODE TOMBOL HAMBURGER DIPINDAHKAN KE SINI
+    # ========================================================
+    st.markdown("""
+    <div class="mobile-hamburger" id="mobile-hb">☰</div>
+    <script>
+    (function(){
+      function clickRealSidebar(){
+        // GANTI SELECTOR DI SINI
+        const sel = 'button[aria-label="Collapse sidebar"]';
+        const btn = document.querySelector(sel) || (window.parent && window.parent.document.querySelector(sel));
+        if(btn) btn.click();
+      }
+      const fake = document.getElementById("mobile-hb");
+      if(fake){
+        fake.addEventListener("click", clickRealSidebar);
+      }
+    })();
+    </script>
+    """, unsafe_allow_html=True)
+    # ========================================================
+    # AKHIR DARI KODE YANG DIPINDAHKAN
+    # ========================================================
 
     st.title("Prediksi Sentimen dari Link Google Play")
     st.caption("Masukkan link aplikasi dari Google Play Store, lalu sistem akan prediksi sentimennya")
