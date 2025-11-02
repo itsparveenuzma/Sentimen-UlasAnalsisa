@@ -38,13 +38,6 @@ for k, v in {
 # =========================
 st.markdown("""
 <style>
-
-<style>
-div[data-testid="collapsedControl"] {
-    display: none !important;
-}
-</style>
-
 :root{ --nav-h: 80px; }  /* tinggi navbar desktop */
 
 /* NAVBAR */
@@ -153,6 +146,7 @@ div[data-testid="collapsedControl"] {
   /* tombol bawaan disembunyikan, tapi bisa diklik oleh JS */
   [data-testid="stSidebarCollapseButton"]{
     opacity: 0 !important;
+    display: none !important;
     /* pointer-events: none !important; DIHAPUS */
   }
 
