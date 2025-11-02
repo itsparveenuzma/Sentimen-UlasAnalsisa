@@ -104,6 +104,10 @@ st.markdown("""
   }
 }
 
+[data-testid="stSidebarCollapseButton"]{
+  display: none !important;
+}
+
 /* ======= MOBILE ======= */
 @media (max-width: 768px){
 
