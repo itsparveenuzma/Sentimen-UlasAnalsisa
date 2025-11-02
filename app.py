@@ -69,7 +69,7 @@ st.markdown("""
 @media (max-width: 900px){
   [data-testid="stSidebarCollapseButton"]{
     position: fixed !important;
-    top: calc(var(--nav-h) + 6px) !important;   /* geser turun */
+    top: calc(var(--nav-h) + 60px) !important;   /* geser turun */
     left: 16px !important;                      /* pojok kiri konten */
     z-index: 1002 !important;
   }
