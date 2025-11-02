@@ -22,68 +22,53 @@ for k, v in {
 
 st.markdown("""
 <style>
-:root{ --nav-h: 80px; }  /* tinggi navbar desktop */
+:root{ --nav-h: 80px; } /* tinggi navbar kamu */
 
-/* tinggi navbar khusus HP (biasanya lebih pendek) */
-@media (max-width: 768px){
-  :root{ --nav-h: 56px; }
-}
-
-/* NAVBAR: boleh fixed atau sticky, pilih salah satu */
-/* kalau mau STICKY: */
+/* NAVBAR fixed (biarkan seperti sebelumnya) */
 .navbar{
-  position: sticky; top:0; left:0; right:0; height: var(--nav-h);
+  position: fixed; top:0; left:0; right:0; height: var(--nav-h);
   background:#fff; display:flex; align-items:center; padding:0 1.5rem;
   border-bottom:3px solid #b71c1c; z-index:1000 !important;
 }
 
-/* header streamlit diratakan */
+/* Header Streamlit jangan dihilangkan total, tapi nolkan tinggi supaya tidak ganggu */
 [data-testid="stHeader"]{
   background: transparent !important;
   box-shadow: none !important;
   height: 0 !important; min-height: 0 !important;
 }
 
-/* konten turun */
+/* Turunkan konten utama di bawah navbar */
 [data-testid="stAppViewContainer"] > .main{
   margin-top: var(--nav-h) !important;
 }
 
-/* TOMBOL HAMBURGER (default: desktop) */
+/* === PINDAHKAN TOMBOL HAMBURGER KE BAWAH NAVBAR (DESKTOP & MOBILE) === */
 [data-testid="stSidebarCollapseButton"]{
   position: fixed !important;
-  top: calc(var(--nav-h) + 8px) !important;
+  top: calc(var(--nav-h) + 8px) !important;   /* di bawah navbar */
   left: 10px !important;
   z-index: 1002 !important;
   display: flex !important;
 }
 
-/* HP: geser lagi ke bawah biar nggak nempel navbar */
-@media (max-width: 768px){
-  [data-testid="stSidebarCollapseButton"]{
-    top: calc(var(--nav-h) + 6px) !important;
-    left: 12px !important;
-  }
-}
-
-/* sidebar mulai di bawah navbar */
+/* Sesuaikan posisi & tinggi sidebar agar mulai di bawah navbar */
 [data-testid="stSidebar"]{
   top: var(--nav-h) !important;
   height: calc(100% - var(--nav-h)) !important;
   z-index: 1001 !important;
 }
 
-/* desktop: paksa kelihatan */
+/* Opsional: kalau mau sidebar SELALU terbuka di desktop, pakai ini */
 @media (min-width: 901px){
   [data-testid="stSidebar"]{
     visibility: visible !important;
     display: flex !important;
-    transform: none !important;
+    transform: none !important;   /* hilangkan animasi geser (kalau sempat ketutup) */
   }
 }
 </style>
 """, unsafe_allow_html=True)
-
 
 
 
