@@ -72,7 +72,9 @@ st.markdown("""
     position: fixed !important;
     top: calc(var(--nav-h) + 20px) !important;
     left: 14px !important;
-    z-index: 1002 !important;
+    right: auto !important;
+    inset: auto !important;      /* reset inset bawaan streamlit */
+    z-index: 2000 !important;
   }
 
   /* tombol saat sidebar kebuka */
