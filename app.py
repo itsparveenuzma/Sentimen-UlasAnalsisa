@@ -70,7 +70,7 @@ st.markdown("""
   /* tombol sebelum dipencet */
   [data-testid="stSidebarCollapseButton"]{
     position: fixed !important;
-    top: calc(var(--nav-h)) !important;
+    top: calc(var(--nav-h) + 20px) !important;
     left: 14px !important;
     z-index: 1002 !important;
   }
@@ -78,7 +78,7 @@ st.markdown("""
   /* tombol saat sidebar kebuka */
   section[data-testid="stSidebar"] [data-testid="stSidebarCollapseButton"]{
     position: sticky !important;
-    top: 12px !important;
+    top: calc(var(--nav-h) + 20px) !important;
     left: 12px !important;
   }
 }
