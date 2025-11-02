@@ -43,35 +43,21 @@ st.markdown("""
   margin-top: var(--nav-h) !important;
 }
 
-//* ====== DESKTOP (>900px) ====== */
-@media (min-width: 901px){
-  /* sidebar selalu kelihatan di desktop */
-  [data-testid="stSidebar"]{
-    visibility: visible !important;
-    display: flex !important;
-    transform: none !important;
-  }
-  /* tombol hamburger di kiri bawah navbar */
-  [data-testid="stSidebarCollapseButton"]{
-    position: fixed !important;
-    top: calc(var(--nav-h) + 16px) !important;
-    left: 14px !important;
-    z-index: 1002 !important;
-    display: flex !important;
-  }
+/* === PINDAHKAN TOMBOL HAMBURGER KE BAWAH NAVBAR (DESKTOP & MOBILE) === */
+[data-testid="stSidebarCollapseButton"]{
+  position: fixed !important;
+  top: calc(var(--nav-h) + 20px) !important;   /* di bawah navbar */
+  left: 10px !important;
+  z-index: 1002 !important;
+  display: flex !important;
 }
 
-/* ====== MOBILE / TABLET (≤900px) ====== */
-@media (max-width: 900px){
-  /* tombol hamburger misal mau di kanan bawah navbar */
-  [data-testid="stSidebarCollapseButton"]{
-    position: fixed !important;
-    top: calc(var(--nav-h) + 40px) !important;
-    right: 14px !important;
-    left: auto !important;
-    z-index: 1002 !important;
-    display: flex !important;
-  }
+/* Sesuaikan posisi & tinggi sidebar agar mulai di bawah navbar */
+[data-testid="stSidebar"]{
+  top: var(--nav-h) !important;
+  height: calc(100% - var(--nav-h)) !important;
+  z-index: 1001 !important;
+}
 
 /* Opsional: kalau mau sidebar SELALU terbuka di desktop, pakai ini */
 @media (min-width: 901px){
