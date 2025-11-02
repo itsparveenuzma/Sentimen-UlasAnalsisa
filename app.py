@@ -1,12 +1,16 @@
 import io, re, base64
 from pathlib import Path
+
 import pandas as pd
 import joblib
 import streamlit as st
 from google_play_scraper import app as gp_app, reviews, Sort
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
-# ---------------- Page config
+
+# =========================
+# PAGE CONFIG
+# =========================
 st.set_page_config(
     page_title="UlasAnalisa – Prediksi Sentimen",
     page_icon="static/logo_ulas.png",
@@ -14,19 +18,29 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ---------------- State
+
+# =========================
+# SESSION STATE BOOTSTRAP
+# =========================
 for k, v in {
-    "results": {}, "app_id": None, "csv_pred": None, "csv_dist": None, "is_combo": False
+    "results": {},
+    "app_id": None,
+    "csv_pred": None,
+    "csv_dist": None,
+    "is_combo": False,
 }.items():
     if k not in st.session_state:
         st.session_state[k] = v
 
-# ---------------- GLOBAL CSS (satu saja)
+
+# =========================
+# GLOBAL CSS (SATU SAJA)
+# =========================
 st.markdown("""
 <style>
-:root{ --nav-h: 80px; }  /* desktop */
+:root{ --nav-h: 80px; }  /* tinggi navbar desktop */
 
-/* NAVBAR utama */
+/* NAVBAR */
 .navbar{
   position: fixed; top:0; left:0; right:0;
   height: var(--nav-h);
@@ -61,7 +75,7 @@ st.markdown("""
 .logo-left{ height:150px; }
 .logo-right{ height:65px; }
 
-/* header streamlit diratakan */
+/* header streamlit di-0-kan */
 [data-testid="stHeader"]{
   background: transparent !important;
   box-shadow: none !important;
@@ -69,18 +83,27 @@ st.markdown("""
   min-height: 0 !important;
 }
 
-/* konten turun supaya tidak ketutup navbar */
+/* konten turun */
 [data-testid="stAppViewContainer"] > .main{
   margin-top: var(--nav-h) !important;
 }
 
-/* tombol hamburger (default) */
+/* tombol bawaan streamlit (desktop) */
 [data-testid="stSidebarCollapseButton"]{
   position: fixed !important;
   top: calc(var(--nav-h) + 8px) !important;
   left: 10px !important;
   z-index: 1100 !important;
   display: flex !important;
+}
+[data-testid="stSidebarCollapseButton"] > button{
+  background: #b71c1c !important;
+  color: #fff !important;
+  border: none !important;
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 999px !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,.25);
 }
 
 /* sidebar mulai di bawah navbar */
@@ -97,50 +120,93 @@ st.markdown("""
     display: flex !important;
     transform: none !important;
   }
+  .mobile-hamburger{
+    display: none !important;
+  }
 }
 
-/* ======== MOBILE OVERRIDE ======== */
+/* ======= MOBILE ======= */
 @media (max-width: 768px){
 
-  :root{ --nav-h: 60px; }   /* tinggi navbar HP */
+  :root{ --nav-h: 60px; }
 
   .navbar{
     height: 60px !important;
     padding: 0 1rem !important;
   }
-
   .nav-left,.nav-right{
     width:140px;
   }
-
   .nav-center{
     gap: 1.25rem;
   }
-
   .logo-left{ height: 44px !important; }
   .logo-right{ height: 34px !important; }
 
-  /* tombol hamburger turun */
+  /* tombol bawaan disembunyikan (kita pakai tombol custom) */
   [data-testid="stSidebarCollapseButton"]{
-    top: calc(var(--nav-h) + 8px) !important;   /* 60 + 8 = 68px */
-    left: 12px !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
 
-  /* sidebar ikut tinggi baru */
+  /* tombol custom tampak */
+  .mobile-hamburger{
+    position: fixed;
+    top: calc(60px + 8px);
+    left: 12px;
+    width: 40px;
+    height: 40px;
+    background: #b71c1c;
+    color: #fff;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    z-index: 1200;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,.25);
+  }
+
+  /* sidebar ikut turun */
   [data-testid="stSidebar"]{
-    top: var(--nav-h) !important;
-    height: calc(100% - var(--nav-h)) !important;
+    top: 60px !important;
+    height: calc(100% - 60px) !important;
   }
 }
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------- Helpers
+# tombol custom + JS trigger tombol asli
+st.markdown("""
+<div class="mobile-hamburger" id="mobile-hb">☰</div>
+<script>
+(function(){
+  function clickRealSidebar(){
+    const sel = '[data-testid="stSidebarCollapseButton"] button';
+    const btn = document.querySelector(sel) || (window.parent && window.parent.document.querySelector(sel));
+    if(btn) btn.click();
+  }
+  const fake = document.getElementById("mobile-hb");
+  if(fake){
+    fake.addEventListener("click", clickRealSidebar);
+  }
+})();
+</script>
+""", unsafe_allow_html=True)
+
+
+# =========================
+# HELPERS
+# =========================
 def img_to_base64(path: str) -> str:
     with open(path, "rb") as f:
         return base64.b64encode(f.read()).decode()
 
-# ---------------- Navbar (HTML saja, TANPA <style> lagi)
+
+# =========================
+# NAVBAR (HTML SAJA)
+# =========================
 logo_left_b64  = img_to_base64("static/logo_ulas.png")
 logo_right_b64 = img_to_base64("static/fti_untar.png")
 
@@ -149,9 +215,9 @@ try:
 except AttributeError:
     page = st.experimental_get_query_params().get("page", ["home"])[0]
 
-home_a  = "active" if page == "home" else ""
-pred_a  = "active" if page == "prediksi" else ""
-tent_a  = "active" if page == "tentang" else ""
+home_a = "active" if page == "home" else ""
+pred_a = "active" if page == "prediksi" else ""
+tent_a = "active" if page == "tentang" else ""
 
 st.markdown(f"""
 <div class="navbar">
@@ -166,19 +232,21 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 
-# ---------------- HOME
+# =========================
+# HALAMAN HOME
+# =========================
 if page == "home":
     st.markdown("## Selamat datang di **UlasAnalisa**")
     st.markdown("### Apa itu **UlasAnalisa?**")
     st.markdown(
         """
-        **UlasAnalisa** adalah website yang membantu menganalisis sentimen ulasan aplikasi di Google Play Store secara otomatis dan menyajikannya dalam bentuk tabel yang mudah dipahami.  
+        **UlasAnalisa** adalah website yang membantu menganalisis sentimen ulasan aplikasi di Google Play Store secara otomatis
+        dan menyajikannya dalam bentuk tabel yang mudah dipahami.  
         Hasil sentimen bisa diunduh dalam bentuk **.csv**.
         """
     )
 
     st.markdown("### Bagaimana Cara Memakainya?")
-
     col1, col2 = st.columns([1, 1])
     with col1:
         st.image("static/1.png", caption="Tampilan Google Play di Website", use_container_width=True)
@@ -201,7 +269,7 @@ if page == "home":
     with col1: st.image("static/5.png", use_container_width=True)
     with col2:
         st.markdown("### Step 2")
-        st.write("Paste / tempel link URL tadi ke kolom input di halaman **Prediksi**.")
+        st.write("Tempel link ke halaman **Prediksi**.")
 
     st.markdown("---")
 
@@ -209,7 +277,7 @@ if page == "home":
     with col1: st.image("static/6.png", use_container_width=True)
     with col2:
         st.markdown("### Step 3")
-        st.write("Atur pengaturan (model, bahasa, negara, jumlah ulasan, urutan) sesuai kebutuhan.")
+        st.write("Atur model, bahasa, negara, jumlah ulasan, dan urutan.")
 
     st.markdown("---")
 
@@ -217,13 +285,17 @@ if page == "home":
     with col1: st.image("static/7.png", use_container_width=True)
     with col2:
         st.markdown("### Step 4")
-        st.write("Klik tombol **Prediksi** → sistem akan ambil ulasan dan menampilkan hasil serta tombol download CSV.")
+        st.write("Klik **Prediksi** → hasil dan tombol download muncul.")
 
-# ---------------- TENTANG
+
+# =========================
+# HALAMAN TENTANG
+# =========================
 elif page == "tentang":
     st.markdown("### Pengembang Website")
     c1, c2 = st.columns([1, 2])
-    with c1: st.image("static/fotoku.png", width=180)
+    with c1:
+        st.image("static/fotoku.png", width=180)
     with c2:
         st.markdown("""
 **Nama** : Parveen Uzma Habidin  
@@ -245,7 +317,10 @@ Perencanaan Analisis Sentimen Aplikasi Sosial Media Pada Google Play Store Mengg
         st.image("static/Logo_untar.png", width=180)
         st.markdown("**Universitas Tarumanagara**")
 
-# ---------------- PREDIKSI
+
+# =========================
+# HALAMAN PREDIKSI
+# =========================
 elif page == "prediksi":
 
     # paksa sidebar kebuka di desktop
@@ -417,7 +492,10 @@ elif page == "prediksi":
                 .encode("utf-8")
             )
 
-# ---------------- OUTPUT
+
+# =========================
+# OUTPUT / HASIL
+# =========================
 if st.session_state.results and page == "prediksi":
     items = list(st.session_state.results.items())
     cols = st.columns(len(items))
