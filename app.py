@@ -31,7 +31,7 @@ for k, v in {
         st.session_state[k] = v
 
 # =========================
-# GLOBAL CSS
+# GLOBAL CSS (TANPA <script>)
 # =========================
 st.markdown("""
 <style>
@@ -72,7 +72,7 @@ st.markdown("""
 .logo-left{ height:150px; }
 .logo-right{ height:65px; }
 
-/* header streamlit di-0-kan */
+/* header streamlit disembunyikan */
 [data-testid="stHeader"]{
   background: transparent !important;
   box-shadow: none !important;
@@ -85,20 +85,21 @@ st.markdown("""
   margin-top: var(--nav-h) !important;
 }
 
-/* tombol bawaan streamlit (default) */
+/* tombol sidebar bawaan streamlit – kita pakai ini */
 [data-testid="stSidebarCollapseButton"]{
   position: fixed !important;
-  top: calc(var(--nav-h) + 8px) !important;
-  left: 10px !important;
+  top: calc(var(--nav-h) + 10px) !important;
+  left: 12px !important;
   z-index: 1100 !important;
-  display: flex !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 [data-testid="stSidebarCollapseButton"] > button{
   background: #b71c1c !important;
   color: #fff !important;
   border: none !important;
-  width: 38px !important;
-  height: 38px !important;
+  width: 40px !important;
+  height: 40px !important;
   border-radius: 999px !important;
   box-shadow: 0 2px 6px rgba(0,0,0,.25);
 }
@@ -110,15 +111,12 @@ st.markdown("""
   z-index: 1001 !important;
 }
 
-/* DESKTOP */
+/* DESKTOP: paksa sidebar selalu kelihatan */
 @media (min-width: 901px){
   [data-testid="stSidebar"]{
     visibility: visible !important;
     display: flex !important;
     transform: none !important;
-  }
-  .mobile-hamburger{
-    display: none !important;
   }
 }
 
@@ -131,41 +129,15 @@ st.markdown("""
     height: 60px !important;
     padding: 0 1rem !important;
   }
-  .nav-left,.nav-right{
-    width:140px;
-  }
-  .nav-center{
-    gap: 1.25rem;
-  }
+  .nav-left,.nav-right{ width:140px; }
+  .nav-center{ gap: 1.25rem; }
   .logo-left{ height: 44px !important; }
   .logo-right{ height: 34px !important; }
 
-  /* tombol bawaan JANGAN dimatikan, cuma disingkirkan ke luar layar
-     supaya masih bisa di-click lewat JS */
+  /* pindahkan tombol bawaan ke bawah navbar */
   [data-testid="stSidebarCollapseButton"]{
-    top: 70px !important;
-    left: -9999px !important;   /* tetap hidup tapi nggak kelihatan */
-    opacity: 1 !important;
-    pointer-events: auto !important;
-  }
-
-  /* tombol custom */
-  .mobile-hamburger{
-    position: fixed;
-    top: calc(60px + 8px);
-    left: 12px;
-    width: 40px;
-    height: 40px;
-    background: #b71c1c;
-    color: #fff;
-    border-radius: 999px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-    z-index: 1200;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,.25);
+    top: calc(60px + 8px) !important;
+    left: 12px !important;
   }
 
   /* sidebar ikut turun */
@@ -175,45 +147,6 @@ st.markdown("""
   }
 }
 </style>
-""", unsafe_allow_html=True)
-
-# tombol custom + JS yg klik tombol asli (yang disingkirkan)
-st.markdown("""
-<div class="mobile-hamburger" id="mobile-hb">☰</div>
-<script>
-(function(){
-  function findRealBtn(){
-    // coba di dokumen sendiri
-    let d = document.querySelector('[data-testid="stSidebarCollapseButton"]');
-    if (d) return d;
-    // coba di parent (kadang streamlit di iframe)
-    if (window.parent && window.parent.document){
-      d = window.parent.document.querySelector('[data-testid="stSidebarCollapseButton"]');
-      if (d) return d;
-    }
-    return null;
-  }
-
-  function toggleSidebar(){
-    const btn = findRealBtn();
-    if (btn){
-      // kalau elemennya <div> ada <button> di dalamnya
-      const realBtn = btn.tagName.toLowerCase() === "button" ? btn : btn.querySelector("button");
-      (realBtn || btn).click();
-    }
-  }
-
-  const fake = document.getElementById("mobile-hb");
-  if (fake){
-    fake.addEventListener("click", toggleSidebar);
-  }
-
-  // jaga-jaga: kalau tombol asli munculnya telat
-  const iv = setInterval(() => {
-    if (findRealBtn()) clearInterval(iv);
-  }, 1000);
-})();
-</script>
 """, unsafe_allow_html=True)
 
 # =========================
@@ -338,30 +271,6 @@ Perencanaan Analisis Sentimen Aplikasi Sosial Media Pada Google Play Store Mengg
 # HALAMAN PREDIKSI
 # =========================
 elif page == "prediksi":
-
-    # paksa sidebar kebuka di desktop
-    st.markdown("""
-    <script>
-    (function() {
-      function openSidebar() {
-        const btn = document.querySelector('[data-testid="stSidebarCollapseButton"]') ||
-                    (window.parent && window.parent.document.querySelector('[data-testid="stSidebarCollapseButton"]'));
-        if (!btn) return;
-        const sb = document.querySelector('[data-testid="stSidebar"]') ||
-                   (window.parent && window.parent.document.querySelector('[data-testid="stSidebar"]'));
-        const isDesktop = window.innerWidth >= 901;
-        if (isDesktop && sb && sb.getAttribute("aria-expanded") === "false") {
-          const realBtn = btn.tagName.toLowerCase() === "button" ? btn : btn.querySelector("button");
-          (realBtn || btn).click();
-        }
-      }
-      setTimeout(openSidebar, 200);
-      setTimeout(openSidebar, 600);
-      window.addEventListener("resize", openSidebar);
-    })();
-    </script>
-    """, unsafe_allow_html=True)
-
     st.title("Prediksi Sentimen dari Link Google Play")
     st.caption("Masukkan link aplikasi dari Google Play Store, lalu sistem akan prediksi sentimennya")
 
@@ -379,7 +288,7 @@ elif page == "prediksi":
     try:
         tfidf_vectorizer, svm_model, rf_model = load_artifacts()
     except Exception as e:
-        st.error(f"Gagal memuat artifacts.\\nDetail: {e}")
+        st.error(f"Gagal memuat artifacts.\nDetail: {e}")
         st.stop()
 
     avail = []
@@ -435,9 +344,9 @@ elif page == "prediksi":
         try:
             meta = gp_app(app_id, lang=lang, country=country)
             st.markdown(
-                f"**App:** {meta.get('title','?')}  \\n"
-                f"**Package:** `{app_id}`  \\n"
-                f"**Installs:** {meta.get('installs','?')}  \\n"
+                f"**App:** {meta.get('title','?')}  \n"
+                f"**Package:** `{app_id}`  \n"
+                f"**Installs:** {meta.get('installs','?')}  \n"
                 f"**Score:** {meta.get('score','?')}"
             )
         except Exception:
