@@ -67,11 +67,19 @@ st.markdown("""
 
 /* MOBILE: tombol DI BAWAH navbar, pas di atas judul */
 @media (max-width: 900px){
+  /* tombol sebelum dipencet */
   [data-testid="stSidebarCollapseButton"]{
     position: fixed !important;
-    top: calc(var(--nav-h) + 6px) !important;   /* geser turun */
-    left: 16px !important;                      /* pojok kiri konten */
+    top: calc(var(--nav-h) + 8px) !important;
+    left: 14px !important;
     z-index: 1002 !important;
+  }
+
+  /* tombol saat sidebar kebuka */
+  section[data-testid="stSidebar"] [data-testid="stSidebarCollapseButton"]{
+    position: sticky !important;
+    top: 12px !important;
+    left: 12px !important;
   }
 }
 </style>
