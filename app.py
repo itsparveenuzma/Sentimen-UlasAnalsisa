@@ -6,12 +6,12 @@ import streamlit as st
 from google_play_scraper import app as gp_app, reviews, Sort
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
-# ---------------- Page config
+# ---------------- Page config: biarkan sidebar default (desktop aman)
 st.set_page_config(
     page_title="UlasAnalisa – Prediksi Sentimen",
     page_icon="static/logo_ulas.png",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="expanded",   # desktop: sidebar tampil normal, tidak ketumpuk
 )
 
 # ---------------- State
@@ -20,78 +20,61 @@ for k, v in {
 }.items():
     if k not in st.session_state: st.session_state[k] = v
 
-# ================== CSS UTAMA ==================
 st.markdown("""
 <style>
-:root{
-  /* tinggi navbar, kalau nanti logo kamu lebih tinggi tinggal ganti */
-  --nav-h: 80px;
-}
+:root{ --nav-h: 80px; } /* tinggi navbar kamu */
 
-/* NAVBAR fix */
+/* NAVBAR fixed (biarkan seperti sebelumnya) */
 .navbar{
   position: fixed; top:0; left:0; right:0; height: var(--nav-h);
   background:#fff; display:flex; align-items:center; padding:0 1.5rem;
   border-bottom:3px solid #b71c1c; z-index:1000 !important;
 }
 
-/* header streamlit dirapikan */
+/* Header Streamlit jangan dihilangkan total, tapi nolkan tinggi supaya tidak ganggu */
 [data-testid="stHeader"]{
   background: transparent !important;
   box-shadow: none !important;
   height: 0 !important; min-height: 0 !important;
 }
 
-/* konten diturunkan di bawah navbar */
+/* Turunkan konten utama di bawah navbar */
 [data-testid="stAppViewContainer"] > .main{
   margin-top: var(--nav-h) !important;
 }
 
-/* ================= HAMBURGER ================= */
-/* default (anggap ini mobile) -> tombol DI BAWAH navbar */
+/* === PINDAHKAN TOMBOL HAMBURGER KE BAWAH NAVBAR (DESKTOP & MOBILE) === */
 [data-testid="stSidebarCollapseButton"]{
   position: fixed !important;
-  top: calc(var(--nav-h) + 14px) !important;   /* <== ini yang nurunin */
-  left: 16px !important;
-  z-index: 2000 !important;
+  top: calc(var(--nav-h) + 8px) !important;   /* di bawah navbar */
+  left: 10px !important;
+  z-index: 1002 !important;
   display: flex !important;
 }
 
-/* sidebar juga mulai di bawah navbar */
+/* Sesuaikan posisi & tinggi sidebar agar mulai di bawah navbar */
 [data-testid="stSidebar"]{
   top: var(--nav-h) !important;
   height: calc(100% - var(--nav-h)) !important;
-  z-index: 1200 !important;
+  z-index: 1001 !important;
 }
 
-/* DESKTOP: sembunyikan tombol, sidebar biar nongol biasa */
+/* Opsional: kalau mau sidebar SELALU terbuka di desktop, pakai ini */
 @media (min-width: 901px){
-  [data-testid="stSidebarCollapseButton"]{
-    display: none !important;
-  }
   [data-testid="stSidebar"]{
     visibility: visible !important;
     display: flex !important;
-    transform: none !important;
-  }
-}
-
-/* kalau HPnya kecil banget, turunin sedikit lagi */
-@media (max-width: 480px){
-  [data-testid="stSidebarCollapseButton"]{
-    top: calc(var(--nav-h) + 20px) !important;
+    transform: none !important;   /* hilangkan animasi geser (kalau sempat ketutup) */
   }
 }
 </style>
 """, unsafe_allow_html=True)
-# ================== /CSS UTAMA ==================
-
 
 # ---------------- Helpers
 def img_to_base64(path: str) -> str:
     with open(path, "rb") as f: return base64.b64encode(f.read()).decode()
 
-# ---------------- Navbar (custom)
+# ---------------- Navbar (custom ringan)
 logo_left_b64  = img_to_base64("static/logo_ulas.png")
 logo_right_b64 = img_to_base64("static/fti_untar.png")
 try:
@@ -113,14 +96,6 @@ st.markdown(f"""
 .nav-center a {{ text-decoration:none; color:#444; font-weight:500; }}
 .nav-center a.active {{ color:#b71c1c; border-bottom:2px solid #b71c1c; padding-bottom:4px; }}
 .logo-left{{ height:150px; }} .logo-right{{ height:65px; }}
-
-/* biar rapih di HP */
-@media (max-width: 900px){
-  .nav-left,.nav-right {{ width:120px; }}
-  .logo-left{{ height:110px; }}
-  .logo-right{{ height:50px; }}
-  .nav-center {{ gap:1.25rem; }}
-}
 </style>
 <div class="navbar">
   <div class="nav-left"><img src="data:image/png;base64,{logo_left_b64}" class="logo-left"></div>
@@ -145,6 +120,8 @@ if page == "home":
     )
 
     st.markdown("### Bagaimana Cara Memakainya?")
+
+    # STEP 1 (Website)
     col1, col2 = st.columns([1, 1])
     with col1:
         st.image("static/1.png", caption="Tampilan Google Play di Website", use_container_width=True)
@@ -154,33 +131,51 @@ if page == "home":
 
     st.markdown("---")
 
+    # STEP 1 (Handphone)
     st.markdown("### Step 1 (Handphone)")
     sp1, c1, c2, c3, sp2 = st.columns([1, 2, 2, 2, 1])
-    with c1: st.image("static/2.png", width=230)
-    with c2: st.image("static/3.png", width=230)
-    with c3: st.image("static/4.png", width=230)
-    st.write("Buka Google Play Store di HP → cari aplikasinya → ketuk **⋮ → Share** → pilih **Copy URL**.")
+    with c1:
+        st.image("static/2.png", width=230)
+
+    with c2:
+        st.image("static/3.png", width=230)
+
+    with c3:
+        st.image("static/4.png", width=230)
+    st.write(
+        "Buka Google Play Store di HP → cari aplikasinya → ketuk **⋮ → Share** → pilih **Copy URL**."
+    )
+
     st.markdown("---")
 
+    # STEP 2
     col1, col2 = st.columns([1, 1])
-    with col1: st.image("static/5.png", use_container_width=True)
+    with col1:
+        st.image("static/5.png", use_container_width=True)
     with col2:
         st.markdown("### Step 2")
         st.write("Paste / tempel link URL tadi ke kolom input di halaman **Prediksi**.")
+
     st.markdown("---")
 
+    # STEP 3
     col1, col2 = st.columns([1, 1])
-    with col1: st.image("static/6.png", use_container_width=True)
+    with col1:
+        st.image("static/6.png", use_container_width=True)
     with col2:
         st.markdown("### Step 3")
         st.write("Atur pengaturan (model, bahasa, negara, jumlah ulasan, urutan) sesuai kebutuhan.")
+
     st.markdown("---")
 
+    # STEP 4
     col1, col2 = st.columns([1, 1])
-    with col1: st.image("static/7.png", use_container_width=True)
+    with col1:
+        st.image("static/7.png", use_container_width=True)
     with col2:
         st.markdown("### Step 4")
         st.write("Klik tombol **Prediksi** → sistem akan ambil ulasan dan menampilkan hasil serta tombol download CSV.")
+
 
 # ---------------- TENTANG
 elif page == "tentang":
@@ -208,29 +203,31 @@ Perencanaan Analisis Sentimen Aplikasi Sosial Media Pada Google Play Store Mengg
 
 # ---------------- PREDIKSI
 elif page == "prediksi":
-
+    
+    # --- Paksa sidebar terbuka di desktop (kalau tersimpan collapsed di local storage) ---
     st.markdown("""
     <script>
     (function() {
-      function openSidebarIfCollapsed() {
+    function openSidebarIfCollapsed() {
         try {
-          const d = window.parent.document;
-          const btn = d.querySelector('[data-testid="stSidebarCollapseButton"] button');
-          const sb  = d.querySelector('[data-testid="stSidebar"]');
-          if (!btn || !sb) return;
-          const isCollapsed = sb.getAttribute('aria-expanded') === 'false';
-          const isDesktop   = window.innerWidth >= 901;
-          if (isDesktop && isCollapsed) btn.click();
-        } catch (e) {}
-      }
-      setTimeout(openSidebarIfCollapsed, 150);
-      setTimeout(openSidebarIfCollapsed, 400);
-      setTimeout(openSidebarIfCollapsed, 800);
-      window.addEventListener('resize', openSidebarIfCollapsed);
+        const d = window.parent.document;
+        const btn = d.querySelector('[data-testid="stSidebarCollapseButton"] button');
+        const sb  = d.querySelector('[data-testid="stSidebar"]');
+        if (!btn || !sb) return;
+        const isCollapsed = sb.getAttribute('aria-expanded') === 'false';
+        const isDesktop   = window.innerWidth >= 901;
+        if (isDesktop && isCollapsed) btn.click();
+        } catch (e) { /* ignore */ }
+    }
+    setTimeout(openSidebarIfCollapsed, 150);
+    setTimeout(openSidebarIfCollapsed, 400);
+    setTimeout(openSidebarIfCollapsed, 800);
+    window.addEventListener('resize', openSidebarIfCollapsed);
     })();
     </script>
     """, unsafe_allow_html=True)
 
+    
     st.title("Prediksi Sentimen dari Link Google Play")
     st.caption("Masukkan link aplikasi dari Google Play Store, lalu sistem akan prediksi sentimennya")
 
@@ -248,7 +245,7 @@ elif page == "prediksi":
     try:
         tfidf_vectorizer, svm_model, rf_model = load_artifacts()
     except Exception as e:
-        st.error(f"Gagal memuat artifacts.\\nDetail: {e}"); st.stop()
+        st.error(f"Gagal memuat artifacts.\nDetail: {e}"); st.stop()
 
     avail = []
     if svm_model is not None: avail.append("SVM (RBF)")
@@ -373,7 +370,7 @@ if st.session_state.results and page=="prediksi":
             type="primary", key="dl_dist"
         )
 
-    def rating_to_label(r):
+    def rating_to_label(r): 
         if pd.isna(r): return None
         return 1 if r >= 4 else 0
     metrics=[]
@@ -387,10 +384,7 @@ if st.session_state.results and page=="prediksi":
             "Recall":recall_score(d["true_label"], d["pred"]),
             "F1-Score":f1_score(d["true_label"], d["pred"]),
         })
-    if metrics:
-        st.subheader("Perbandingan Metrik Evaluasi (dibanding rating bintang)")
-        st.dataframe(pd.DataFrame(metrics), use_container_width=True)
-    else:
-        st.info("Tidak ada metrik yang bisa dihitung.")
+    if metrics: st.subheader("Perbandingan Metrik Evaluasi (dibanding rating bintang)"); st.dataframe(pd.DataFrame(metrics), use_container_width=True)
+    else: st.info("Tidak ada metrik yang bisa dihitung.")
 elif page=="prediksi" and not st.session_state.results:
     st.info("Masukkan link/package, lalu klik **Prediksi**.")
