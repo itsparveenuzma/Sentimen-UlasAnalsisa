@@ -88,24 +88,6 @@ st.markdown("""
   margin-top: var(--nav-h) !important;
 }
 
-/* tombol bawaan streamlit (desktop) */
-[data-testid="stSidebarCollapseButton"]{
-  position: fixed !important;
-  top: calc(var(--nav-h) + 8px) !important;
-  left: 10px !important;
-  z-index: 1100 !important;
-  display: flex !important;
-}
-[data-testid="stSidebarCollapseButton"] > button{
-  background: #b71c1c !important;
-  color: #fff !important;
-  border: none !important;
-  width: 38px !important;
-  height: 38px !important;
-  border-radius: 999px !important;
-  box-shadow: 0 2px 6px rgba(0,0,0,.25);
-}
-
 /* sidebar mulai di bawah navbar */
 [data-testid="stSidebar"]{
   top: var(--nav-h) !important;
@@ -139,14 +121,6 @@ st.markdown("""
   }
   .logo-left{ height: 44px !important; }
   .logo-right{ height: 34px !important; }
-
-  /* JANGAN disembunyikan: biar tombol sidebar bawaan Streamlit muncul di mobile */
-  [data-testid="stSidebarCollapseButton"]{
-    opacity: 1 !important;
-    display: flex !important;
-    pointer-events: auto !important;
-    top: calc(60px + 8px) !important;
-  }
 
   /* sidebar ikut turun */
   [data-testid="stSidebar"]{
