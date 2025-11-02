@@ -34,13 +34,13 @@ for k, v in {
 
 
 # =========================
-# GLOBAL CSS (SATU SAJA)
+# GLOBAL CSS (DESKTOP ONLY)
 # =========================
 st.markdown("""
 <style>
-:root{ --nav-h: 80px; }  /* tinggi navbar desktop */
+:root{ --nav-h: 80px; }
 
-/* NAVBAR */
+/* NAVBAR (fixed di atas) */
 .navbar{
   position: fixed; top:0; left:0; right:0;
   height: var(--nav-h);
@@ -75,7 +75,7 @@ st.markdown("""
 .logo-left{ height:150px; }
 .logo-right{ height:65px; }
 
-/* header streamlit di-0-kan */
+/* header streamlit di-nol-kan */
 [data-testid="stHeader"]{
   background: transparent !important;
   box-shadow: none !important;
@@ -83,54 +83,24 @@ st.markdown("""
   min-height: 0 !important;
 }
 
-/* konten turun */
+/* konten turun karena ada navbar */
 [data-testid="stAppViewContainer"] > .main{
   margin-top: var(--nav-h) !important;
 }
 
-/* sidebar mulai di bawah navbar */
-[data-testid="stSidebar"]{
-  top: var(--nav-h) !important;
-  height: calc(100% - var(--nav-h)) !important;
-  z-index: 1001 !important;
-}
-
-/* desktop: paksa sidebar tampil */
-@media (min-width: 901px){
-  [data-testid="stSidebar"]{
-    visibility: visible !important;
-    display: flex !important;
-    transform: none !important;
-  }
-}
-
+/* SEMBUNYIKAN tombol sidebar bawaan (desktop) */
 [data-testid="stSidebarCollapseButton"]{
   display: none !important;
 }
 
-/* ======= MOBILE ======= */
-@media (max-width: 768px){
-
-  :root{ --nav-h: 60px; }
-
-  .navbar{
-    height: 60px !important;
-    padding: 0 1rem !important;
-  }
-  .nav-left,.nav-right{
-    width:140px;
-  }
-  .nav-center{
-    gap: 1.25rem;
-  }
-  .logo-left{ height: 44px !important; }
-  .logo-right{ height: 34px !important; }
-
-  /* sidebar ikut turun */
-  [data-testid="stSidebar"]{
-    top: 60px !important;
-    height: calc(100% - 60px) !important;
-  }
+/* sidebar selalu muncul dan mulai di bawah navbar */
+[data-testid="stSidebar"]{
+  top: var(--nav-h) !important;
+  height: calc(100% - var(--nav-h)) !important;
+  visibility: visible !important;
+  display: flex !important;
+  transform: none !important;
+  z-index: 1001 !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -263,7 +233,7 @@ Perencanaan Analisis Sentimen Aplikasi Sosial Media Pada Google Play Store Mengg
 # =========================
 elif page == "prediksi":
 
-    # paksa sidebar kebuka di desktop
+    # paksa sidebar kebuka di desktop (boleh disimpan)
     st.markdown("""
     <script>
     (function() {
